@@ -2,14 +2,21 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
 import time
+import mysql.connector
 from tkinter import *
 import requests
 from bs4 import BeautifulSoup
 WINDOW_SIZE = "1920,1080"
 
 
+mydb=mysql.connector.connect(
+    host='localhost',
+    user='root',
+    passwd='toor',
+    database='internship'
+)
 
-popular_sites_url=['http://google.com','http://geeksforgeeks.org','http://javatpoint.com', 'http://ucnews.in', 'http://youtube.com', 'http://facebook.com', 'http://ucweb.com','http://python.org','http://instagram.com','http://gmail.com', 'http://xnxx.tv', 'http://xvideos3.com', 'http://google.co.in', 'http://xnxx.com', 'http://twitter.com', 'http://xvideos.com', 'http://google.com.br', 'http://wikipedia.org', 'http://covid19india.org', 'http://indiatimes.com', 'http://xvideos2.com', 'http://xhamster2.desi', 'http://whatsapp.com', 'http://amazon.in', 'http://cgtn.com', 'http://zoom.us', 'http://quora.com', 'http://worldometers.info', 'http://9apps.com', 'http://yahoo.com', 'http://linkedin.com', 'http://news18.com', 'http://anybunny.tv', 'http://youtu.be', 'http://flipkart.com', 'http://freepornfull.com', 'http://onlinesbi.com', 'http://netflix.com', 'http://xhamster.com', 'http://pinterest.com', 'http://hotstar.com', 'http://rummycircle.com', 'http://bit.ly', 'http://ndtv.com', 'http://softcore69.com', 'http://freeindianporn.mobi', 'http://office.com', 'http://moneycontrol.com', 'http://tamiltips.ga', 'http://pornhdvideos.net', 'http://timesofindia.com', 'http://primevideo.com', 'http://xnxxfap.com', 'http://livemint.com', 'http://baidu.com', 'http://pornhub.com', 'http://amazon.com', 'http://yandex.ru', 'http://vk.com', 'http://live.com', 'http://yahoo.co.jp', 'http://naver.com', 'http://reddit.com', 'http://mail.ru', 'http://ok.ru', 'http://qq.com', 'http://ebay.com', 'http://microsoft.com', 'http://bing.com', 'http://msn.com', 'http://bilibili.com', 'http://amazon.co.jp', 'http://rakuten.co.jp', 'http://globo.com', 'http://microsoftonline.com', 'http://amazon.de', 'http://paypal.com', 'http://twitch.tv', 'http://google.de', 'http://roblox.com', 'http://uol.com.br', 'http://imdb.com', 'http://google.co.jp']
+mycursor=mydb.cursor()
 
 def google_security():
     global google_lock
@@ -56,13 +63,16 @@ def Whois():
     driver = webdriver.Chrome(executable_path='E:\selenium\chromedriver.exe', chrome_options=chrome_options)
 
     driver.get("https://www.iplocation.net/domain-age")
-    driver.find_element_by_name("domain").send_keys("gmail.com")
+    driver.find_element_by_name("domain").send_keys(url_use)
     driver.find_element_by_name("domain").send_keys(Keys.ENTER)
 
     time.sleep(1)
 
     k = driver.find_element_by_xpath(
         "/html/body/div[1]/section/div/div/div[1]/div[7]/div/table/tbody/tr[3]/td/strong").text
+
+    if k == "Domain age unknown.":
+        return factor_good
     domain_age=int(k[0:2])
 
     if domain_age>=3:
@@ -75,14 +85,37 @@ def Whois():
 #     rank_int = int(rank_str.replace(',', ''))
 
 def do():
-
+    url_p = url_b = "not in database"
     check = "Unknown"
     global url_use
     url_use = url.get()
-    # Checking the url in popular sites
-    if "http://"+url_use in popular_sites_url:
-        check="It Is Not A Phishing Site"
-        show_Label.config(text=check, bg='yellow')
+
+    url_for_database = "http://" + url_use
+    https_url = "https://" + url_use
+
+    # code to remove / from the end of domain
+    if url_use[-1:] == "/":
+        url_use = url_use[:-1]
+
+
+    # Checking the url in DataBase
+    mycursor.execute('select http from popular_sites where http=%s', (url_for_database,))
+    for i in mycursor:
+        url_p = i[0]
+
+    mycursor.execute('select http from blocked_urls where http=%s', (url_for_database,))
+    for i in mycursor:
+        url_b = i[0]
+
+    if url_p != "not in database" or url_b != "not in database":
+        if url_for_database == url_p:
+            check="It Is Not A Phishing Site"
+            show_Label.config(text=check, bg='yellow')
+
+        else:
+            check = "It Is A Phishing Site"
+            show_Label.config(text=check, bg='yellow')
+
 
     # Checking the url in phishtank database
     elif requests.get('https://www.phishtank.com/').status_code == 200:
@@ -108,8 +141,87 @@ def do():
         current_url_link = driver.current_url
         time.sleep(1)
 
+        if current_url_link == 'https://www.phishtank.com/':
+            driver.find_element_by_name("isaphishurl").send_keys((Keys.BACKSPACE) * 7)
+            time.sleep(1)
 
-        if current_url_link != 'https://www.phishtank.com/':
+            driver.find_element_by_name("isaphishurl").send_keys('https://' + url_use)
+            time.sleep(1)
+
+            driver.find_element_by_class_name("submitbutton").send_keys(Keys.ENTER)
+            time.sleep(1)
+
+            current_url_link = driver.current_url
+            time.sleep(1)
+            if current_url_link != 'https://www.phishtank.com/':
+
+                result = requests.get(current_url_link)
+                src = result.content
+
+                soup = BeautifulSoup(src, 'lxml')
+
+                for link in soup.find_all("b"):
+                    if "Is a phish" in link:
+                        check = "It Is A Phishing Site"
+                        show_Label.config(text=check, bg='yellow')
+                        mycursor.execute("Insert into blocked_urls (http,https) values (%s, %s)",(url_for_database,https_url,))
+                        mydb.commit()
+
+                    elif "Is NOT a phish" in link:
+                        check = "It Is Not A Phishing Site"
+                        show_Label.config(text=check, bg='yellow')
+                        mycursor.execute("Insert into popular_sites (http,https) values (%s, %s)",
+                                         (url_for_database, https_url,))
+                        mydb.commit()
+
+                    else:
+                        if google_lock:
+                            check = "It Is A Phishing Site"
+                            show_Label.config(text=check, bg='yellow')
+                            mycursor.execute("Insert into blocked_urls (http,https) values (%s, %s)",
+                                             (url_for_database, https_url,))
+                            mydb.commit()
+
+                        # elif rank_int <= 150000:
+                        #     check = "It Is Not A Phishing Site"
+                        #     show_Label.config(text=check, bg='yellow')
+                        #     mycursor.execute("Insert into popular_sites (http,https) values (%s, %s)",
+                        #                                          (url_for_database, https_url,))
+                        #     mydb.commit()
+                        #
+
+                        elif factor_good == 1:
+                            check = "It Does Not Looks A Phishing Site"
+                            show_Label.config(text=check, bg='yellow')
+
+                        else:
+                            check = "It Can Be A Phishing Site"
+                            show_Label.config(text=check, bg='yellow')
+
+            else:
+                if google_lock:
+                    check = "It Is A Phishing Site"
+                    show_Label.config(text=check, bg='yellow')
+                    mycursor.execute("Insert into blocked_urls (http,https) values (%s, %s)",
+                                     (url_for_database, https_url,))
+                    mydb.commit()
+
+                # elif rank_int <= 150000:
+                #     check = "It Is Not A Phishing Site"
+                #     show_Label.config(text=check, bg='yellow')
+                #     mycursor.execute("Insert into popular_sites (http,https) values (%s, %s)",
+                #                                          (url_for_database, https_url,))
+                #     mydb.commit()
+
+                elif factor_good == 1:
+                    check = "It Does Not Looks A Phishing Site"
+                    show_Label.config(text=check, bg='yellow')
+
+                else:
+                    check = "It Can Be A Phishing Site"
+                    show_Label.config(text=check, bg='yellow')
+
+        elif current_url_link != 'https://www.phishtank.com/':
 
             result = requests.get(current_url_link)
             src = result.content
@@ -120,16 +232,25 @@ def do():
                 if "Is a phish" in link:
                     check="It Is A Phishing Site"
                     show_Label.config(text=check,bg='yellow')
+                    mycursor.execute("Insert into blocked_urls (http,https) values (%s, %s)",
+                                     (url_for_database, https_url,))
+                    mydb.commit()
 
                 elif "Is NOT a phish" in link:
                     check="It Is Not A Phishing Site"
                     show_Label.config(text=check,bg='yellow')
+                    mycursor.execute("Insert into popular_sites (http,https) values (%s, %s)",
+                                     (url_for_database, https_url,))
+                    mydb.commit()
 
 
                 else:
                     if google_lock:
                         check = "It Is A Phishing Site"
                         show_Label.config(text=check, bg='yellow')
+                        mycursor.execute("Insert into blocked_urls (http,https) values (%s, %s)",
+                                         (url_for_database, https_url,))
+                        mydb.commit()
 
                     # elif rank_int <= 150000:
                     #     check = "It Is Not A Phishing Site"
@@ -146,10 +267,15 @@ def do():
         elif google_lock:
             check = "It Is A Phishing Site"
             show_Label.config(text=check, bg='yellow')
+            mycursor.execute("Insert into blocked_urls (http,https) values (%s, %s)", (url_for_database, https_url,))
+            mydb.commit()
 
         # elif rank_int<=150000:
         #     check = "It Is Not A Phishing Site"
         #     show_Label.config(text=check,bg='yellow')
+        #     mycursor.execute("Insert into popular_sites (http,https) values (%s, %s)",
+        #                                          (url_for_database, https_url,))
+        #     mydb.commit()
 
         elif factor_good==1:
             check = "It Does'nt Looks Like A Phishing Site"
@@ -162,17 +288,22 @@ def do():
     elif google_lock:
         check = "It Is A Phishing Site"
         show_Label.config(text=check, bg='yellow')
+        mycursor.execute("Insert into blocked_urls (http,https) values (%s, %s)", (url_for_database, https_url,))
+        mydb.commit()
 
     # elif rank_int <= 150000:
     #     check = "It Is Not A Phishing Site"
     #     show_Label.config(text=check, bg='yellow')
+    #     mycursor.execute("Insert into popular_sites (http,https) values (%s, %s)",
+    #                                          (url_for_database, https_url,))
+    #     mydb.commit()
 
     elif factor_good == 1:
         check = "It Does'nt Looks Like A Phishing Site"
         show_Label.config(text=check, bg='yellow')
 
     else:
-        check = "It Does'nt Looks Like A Phishing Site"
+        check = "It Can Be a Phishing site"
         show_Label.config(text=check, bg='yellow')
 
 

@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="0292a139-f917-4dbc-ba8e-37bf6bf6eed3" name="Default Changelist" comment="" />
+    <list default="true" id="0292a139-f917-4dbc-ba8e-37bf6bf6eed3" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PhishTank.py" beforeDir="false" afterPath="$PROJECT_DIR$/PhishTank.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/capture.png" beforeDir="false" afterPath="$PROJECT_DIR$/capture.png" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -13,13 +17,10 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/PhishTank.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="748">
-              <caret line="69" lean-forward="true" selection-start-line="69" selection-end-line="69" />
+            <state relative-caret-position="232">
+              <caret line="85" lean-forward="true" selection-start-line="85" selection-end-line="85" />
               <folding>
                 <element signature="e#0#30#0" expanded="true" />
-                <element signature="e#3253#4247#0" />
-                <element signature="e#4249#4263#0" />
-                <element signature="e#4571#7978#0" />
               </folding>
             </state>
           </provider>
@@ -42,6 +43,8 @@
       <find>main.calc().url_use</find>
       <find>print</find>
       <find>alibaba</find>
+      <find>https</find>
+      <find>url_use</find>
     </findStrings>
     <replaceStrings>
       <replace>[0]</replace>
@@ -80,7 +83,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -92,6 +94,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -256,21 +259,20 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1382" height="744" extended-state="7" />
-    <editor active="true" />
+    <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49748743" visible="true" weight="0.11160714" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49748743" visible="true" weight="0.13988096" />
       <window_info id="Structure" order="1" sideWeight="0.5025126" side_tool="true" weight="0.24330357" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.25204584" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.28150573" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.39934534" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.07037643" />
-      <window_info anchor="bottom" id="Version Control" order="7" />
-      <window_info anchor="bottom" id="Terminal" order="8" weight="0.3289689" />
+      <window_info anchor="bottom" id="Version Control" order="7" weight="0.3289689" />
+      <window_info anchor="bottom" id="Terminal" order="8" weight="0.3617021" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
       <window_info anchor="bottom" id="Python Console" order="10" weight="0.3289689" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
@@ -301,19 +303,16 @@
     <entry file="file://$PROJECT_DIR$/main.py" />
     <entry file="file://$PROJECT_DIR$/Whois.py" />
     <entry file="file://$PROJECT_DIR$/GoogleSecure.py" />
+    <entry file="file://$PROJECT_DIR$/AlexaRank.py" />
     <entry file="file://$PROJECT_DIR$/capture.png">
       <provider selected="true" editor-type-id="images" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/AlexaRank.py" />
     <entry file="file://$PROJECT_DIR$/PhishTank.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="748">
-          <caret line="69" lean-forward="true" selection-start-line="69" selection-end-line="69" />
+        <state relative-caret-position="232">
+          <caret line="85" lean-forward="true" selection-start-line="85" selection-end-line="85" />
           <folding>
             <element signature="e#0#30#0" expanded="true" />
-            <element signature="e#3253#4247#0" />
-            <element signature="e#4249#4263#0" />
-            <element signature="e#4571#7978#0" />
           </folding>
         </state>
       </provider>
