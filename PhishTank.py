@@ -77,6 +77,8 @@ def Whois():
 
     if domain_age>=3:
         factor_good = 1
+    return factor_good
+
 
 # def Alexa():
 #     rank_str = BeautifulSoup(urllib.request.urlopen("https://www.alexa.com/minisiteinfo/" + Whois.calc().url_use),
@@ -86,7 +88,7 @@ def Whois():
 
 def do():
     url_p = url_b = "not in database"
-    check = "Unknown"
+    # check = "Unknown"
     global url_use
     url_use = url.get()
 
@@ -119,8 +121,8 @@ def do():
 
     # Checking the url in phishtank database
     elif requests.get('https://www.phishtank.com/').status_code == 200:
-        google_security()
-        Whois()
+        # google_security()
+        # Whois()
         # Alexa()
         chrome_options = Options()
         chrome_options.add_argument("--headless")
@@ -160,43 +162,45 @@ def do():
 
                 soup = BeautifulSoup(src, 'lxml')
 
-                for link in soup.find_all("b"):
-                    if "Is a phish" in link:
+                link = soup.find_all("b")
+                if "Is a phish" in link:
+                    check = "It Is A Phishing Site"
+                    show_Label.config(text=check, bg='yellow')
+                    mycursor.execute("Insert into blocked_urls (http,https) values (%s, %s)",(url_for_database,https_url,))
+                    mydb.commit()
+
+                elif "Is NOT a phish" in link:
+                    check = "It Is Not A Phishing Site"
+                    show_Label.config(text=check, bg='yellow')
+                    mycursor.execute("Insert into popular_sites (http,https) values (%s, %s)",
+                                         (url_for_database, https_url,))
+                    mydb.commit()
+
+                else:
+                    google_security()
+                    if google_lock:
                         check = "It Is A Phishing Site"
                         show_Label.config(text=check, bg='yellow')
-                        mycursor.execute("Insert into blocked_urls (http,https) values (%s, %s)",(url_for_database,https_url,))
-                        mydb.commit()
-
-                    elif "Is NOT a phish" in link:
-                        check = "It Is Not A Phishing Site"
-                        show_Label.config(text=check, bg='yellow')
-                        mycursor.execute("Insert into popular_sites (http,https) values (%s, %s)",
-                                         (url_for_database, https_url,))
-                        mydb.commit()
-
-                    else:
-                        if google_lock:
-                            check = "It Is A Phishing Site"
-                            show_Label.config(text=check, bg='yellow')
-                            mycursor.execute("Insert into blocked_urls (http,https) values (%s, %s)",
+                        mycursor.execute("Insert into blocked_urls (http,https) values (%s, %s)",
                                              (url_for_database, https_url,))
-                            mydb.commit()
+                        mydb.commit()
 
-                        # elif rank_int <= 150000:
-                        #     check = "It Is Not A Phishing Site"
-                        #     show_Label.config(text=check, bg='yellow')
-                        #     mycursor.execute("Insert into popular_sites (http,https) values (%s, %s)",
-                        #                                          (url_for_database, https_url,))
-                        #     mydb.commit()
-                        #
 
-                        elif factor_good == 1:
+                    # elif rank_int <= 150000:
+                    #     check = "It Is Not A Phishing Site"
+                    #     show_Label.config(text=check, bg='yellow')
+                    #     mycursor.execute("Insert into popular_sites (http,https) values (%s, %s)",
+                    #                                          (url_for_database, https_url,))
+                    #     mydb.commit()
+                    #
+
+                    elif Whois():
                             check = "It Does Not Looks A Phishing Site"
                             show_Label.config(text=check, bg='yellow')
 
-                        else:
-                            check = "It Can Be A Phishing Site"
-                            show_Label.config(text=check, bg='yellow')
+                    else:
+                        check = "It Can Be A Phishing Site"
+                        show_Label.config(text=check, bg='yellow')
 
             else:
                 if google_lock:
@@ -228,43 +232,48 @@ def do():
 
             soup = BeautifulSoup(src, 'lxml')
 
-            for link in soup.find_all("b"):
-                if "Is a phish" in link:
-                    check="It Is A Phishing Site"
-                    show_Label.config(text=check,bg='yellow')
+            link=soup.find_all("b")
+            if "Is a phish" in link:
+                check="It Is A Phishing Site"
+                show_Label.config(text=check,bg='yellow')
+                mycursor.execute("Insert into blocked_urls (http,https) values (%s, %s)",
+                                     (url_for_database, https_url,))
+                mydb.commit()
+
+            elif "Is NOT a phish" in link:
+                check="It Is Not A Phishing Site"
+                show_Label.config(text=check,bg='yellow')
+                mycursor.execute("Insert into popular_sites (http,https) values (%s, %s)",
+                                     (url_for_database, https_url,))
+                mydb.commit()
+
+
+            else :
+                google_security()
+                if google_lock:
+                    check = "It Is A Phishing Site"
+                    show_Label.config(text=check, bg='yellow')
                     mycursor.execute("Insert into blocked_urls (http,https) values (%s, %s)",
-                                     (url_for_database, https_url,))
+                                         (url_for_database, https_url,))
                     mydb.commit()
 
-                elif "Is NOT a phish" in link:
-                    check="It Is Not A Phishing Site"
-                    show_Label.config(text=check,bg='yellow')
-                    mycursor.execute("Insert into popular_sites (http,https) values (%s, %s)",
-                                     (url_for_database, https_url,))
-                    mydb.commit()
+                # elif rank_int <= 150000:
+                #     check = "It Is Not A Phishing Site"
+                #     show_Label.config(text=check, bg='yellow')
+                #     mycursor.execute("Insert into popular_sites (http,https) values (%s, %s)",
+                #                                          (url_for_database, https_url,))
+                #     mydb.commit()
 
+                elif Whois():
+                    check = "It Does Not Looks A Phishing Site"
+                    show_Label.config(text=check, bg='yellow')
 
                 else:
-                    if google_lock:
-                        check = "It Is A Phishing Site"
-                        show_Label.config(text=check, bg='yellow')
-                        mycursor.execute("Insert into blocked_urls (http,https) values (%s, %s)",
-                                         (url_for_database, https_url,))
-                        mydb.commit()
-
-                    # elif rank_int <= 150000:
-                    #     check = "It Is Not A Phishing Site"
-                    #     show_Label.config(text=check, bg='yellow')
-
-                    elif factor_good == 1:
-                        check = "It Does Not Looks A Phishing Site"
-                        show_Label.config(text=check, bg='yellow')
-
-                    else:
-                        check = "It Can Be A Phishing Site"
-                        show_Label.config(text=check, bg='yellow')
+                    check = "It Can Be A Phishing Site"
+                    show_Label.config(text=check, bg='yellow')
 
         elif google_lock:
+            google_security()
             check = "It Is A Phishing Site"
             show_Label.config(text=check, bg='yellow')
             mycursor.execute("Insert into blocked_urls (http,https) values (%s, %s)", (url_for_database, https_url,))
@@ -277,7 +286,7 @@ def do():
         #                                          (url_for_database, https_url,))
         #     mydb.commit()
 
-        elif factor_good==1:
+        elif Whois():
             check = "It Does'nt Looks Like A Phishing Site"
             show_Label.config(text=check, bg='yellow')
 
@@ -286,6 +295,7 @@ def do():
             show_Label.config(text=check, bg='yellow')
 
     elif google_lock:
+        google_security()
         check = "It Is A Phishing Site"
         show_Label.config(text=check, bg='yellow')
         mycursor.execute("Insert into blocked_urls (http,https) values (%s, %s)", (url_for_database, https_url,))
@@ -298,7 +308,7 @@ def do():
     #                                          (url_for_database, https_url,))
     #     mydb.commit()
 
-    elif factor_good == 1:
+    elif Whois():
         check = "It Does'nt Looks Like A Phishing Site"
         show_Label.config(text=check, bg='yellow')
 
